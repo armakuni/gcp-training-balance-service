@@ -1,0 +1,44 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_CONTAINER_HOSTNAME}/$PROJECT_ID/${_SERVICE_NAME}', '.']
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${_CONTAINER_HOSTNAME}/$PROJECT_ID/${_SERVICE_NAME}"]
+
+  - name: '${_CONTAINER_HOSTNAME}/$PROJECT_ID/${_SERVICE_NAME}'
+    args: ['make', 'lint']
+
+  - name: '${_CONTAINER_HOSTNAME}/$PROJECT_ID/${_SERVICE_NAME}'
+    args: ['make', 'tests']
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "run",
+        "deploy",
+        "${_SERVICE_NAME}",
+        "--image",
+        "${_CONTAINER_HOSTNAME}/$PROJECT_ID/${_SERVICE_NAME}",
+        "--update-env-vars",
+        "BALANCE_NAMESPACE=${_BALANCE_NAMESPACE}",
+        "--region",
+        "${_REGION}",
+        "--allow-unauthenticated",
+        "--platform",
+        "managed",
+      ]
+
+  - id: "deploy cloud function"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: /bin/bash
+    args:
+    - -c
+    - |
+      gcloud functions deploy store_account_balance_update --trigger-topic ${_BALANCE_UPDATES_TOPIC} --set-env-vars BALANCE_NAMESPACE=${_BALANCE_NAMESPACE} --runtime python37 --source=balance_worker
+
+substitutions:
+  _CONTAINER_HOSTNAME: eu.gcr.io
+  _SERVICE_NAME: gcp-training-balance-service
+  _REGION: europe-west1
+  _BALANCE_NAMESPACE: account_balances
+  _BALANCE_UPDATES_TOPIC: balance
