@@ -3,6 +3,7 @@
 import os
 import logging
 
+
 class config(object):
     """Base configuration."""
     # SWAGGER
@@ -21,7 +22,7 @@ class test_config():
     TESTING = 'true'
     ENV = 'testing'
     # SWAGGER
-    SWAGGER_URL = os.getenv('SWAGGER_URL','/docs')
+    SWAGGER_URL = os.getenv('SWAGGER_URL', '/docs')
     SWAGGER_FILE_PATH = os.getenv(
         'SWAGGER_FILE_PATH', '/../../../swagger.yml')
 
