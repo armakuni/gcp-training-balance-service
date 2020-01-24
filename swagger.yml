@@ -6,7 +6,7 @@ info:
   title: Balance Service API
   description: Provide account balance details
 
-host: "localhost:5002"
+host: "localhost:5005"
 schemes:
   - http
 
