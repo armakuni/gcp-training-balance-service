@@ -34,7 +34,7 @@ steps:
     args:
     - -c
     - |
-      gcloud functions deploy store_account_balance_update --trigger-topic ${_BALANCE_UPDATES_TOPIC} --set-env-vars BALANCE_NAMESPACE=${_BALANCE_NAMESPACE} --runtime python37 --source=balance_worker
+      gcloud functions deploy ${_BALANCE_WORKER_FUNCTION_NAME} --trigger-topic ${_BALANCE_UPDATES_TOPIC} --set-env-vars BALANCE_NAMESPACE=${_BALANCE_NAMESPACE} --runtime python37 --source=balance_worker
 
 substitutions:
   _CONTAINER_HOSTNAME: eu.gcr.io
@@ -42,3 +42,4 @@ substitutions:
   _REGION: europe-west1
   _BALANCE_NAMESPACE: account_balances
   _BALANCE_UPDATES_TOPIC: balance
+  _BALANCE_WORKER_FUNCTION_NAME: store_account_balance_update
